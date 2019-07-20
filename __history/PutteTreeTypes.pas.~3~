@@ -1,0 +1,15 @@
+unit PutteTreeTypes;
+
+interface
+
+type
+	FSFileRec = record
+        Path: String;
+        Name: String;
+    end;
+
+FListing: TList;
+
+implementation
+
+end.

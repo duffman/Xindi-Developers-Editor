@@ -1,0 +1,39 @@
+unit PutteTreeTypes;
+
+interface
+
+type
+	TFSInfoClass = class(TObject)
+    	FPath: String;
+        FName: String;
+
+	public
+    	constructor Create();
+        destructor Destroy; override;
+
+        {****************************
+        * Properties
+        ****************************}
+        property Path: String read FPath write FPath;
+        property Name: String read FName write FName;
+
+    end;
+
+FListing: TList;
+
+implementation
+
+{ TFSInfoClass }
+
+constructor TFSInfoClass.Create;
+begin
+
+end;
+
+destructor TFSInfoClass.Destroy;
+begin
+
+    inherited;
+end;
+
+end.

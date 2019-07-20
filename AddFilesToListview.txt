@@ -1,0 +1,68 @@
+  with ListView do
+    begin
+        Result := False;
+        if not SetCurrentDir(FDirectory) then
+	        exit;
+
+        if FindFirst(FileMask,faAnyFile,FI)=0 then
+            try
+	            repeat
+                    if ((Attr and FILE_ATTRIBUTE_DIRECTORY)=(FI.Attr and FILE_ATTRIBUTE_DIRECTORY)) and
+                        ((Attr and FILE_ATTRIBUTE_READONLY)>=(FI.Attr and FILE_ATTRIBUTE_READONLY)) and
+                        ((Attr and FILE_ATTRIBUTE_HIDDEN)>=(FI.Attr and FILE_ATTRIBUTE_HIDDEN)) and
+                        ((Attr and FILE_ATTRIBUTE_SYSTEM)>=(FI.Attr and FILE_ATTRIBUTE_SYSTEM)) then begin
+                        CurPath:=IncludeTrailingBackslash(FDirectory);
+
+        FName := FI.Name;
+        FileName := IncludeTrailingBackslash(FDirectory)+FName;
+
+        // Duffman: We want to include parent dir
+        //if (FName='.') then
+	    //    Continue;
+
+        SHGetFileInfo(PChar(FileName),0,ShInfo,SizeOf(ShInfo),SHGFI_TYPENAME
+        	or SHGFI_SYSICONINDEX or SHGFI_DISPLAYNAME);
+
+        FSize := FI.Size;
+
+        FDate := DateTimeToStr(TFileUtils.FileTimeToDateTime(FI.FindData.ftLastWriteTime));
+
+        Attributes := AttrStr(FI.Attr);
+
+	    with Items.Add do
+        begin
+        	// Directory Name
+
+            Caption := FName;
+
+
+            if SmallImages <> nil then
+	            ImageIndex := ShInfo.iIcon;
+
+            if (FI.Attr and FILE_ATTRIBUTE_DIRECTORY) = FILE_ATTRIBUTE_DIRECTORY then
+            	SubItems.Add('..')
+            else
+        	    SubItems.Add(Trim(IntToStr(FSize)));
+
+            SubItems.Add((ShInfo.szTypeName));
+            SubItems.Add(FDate);
+            SubItems.Add(attributes);
+            SubItems.Add('balle');//FileName);
+
+            if (FI.Attr and FILE_ATTRIBUTE_DIRECTORY) = FILE_ATTRIBUTE_DIRECTORY then
+	            SubItems.Add('dir')
+            else
+    	        SubItems.Add('file');
+
+	    end;
+            FDirectorySize := FDirectorySize+FSize;
+            Result := True;
+          end;
+
+     until FindNext(FI) <> 0;
+
+  finally
+    FindClose(FI);
+  end;
+
+  end;

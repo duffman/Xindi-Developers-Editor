@@ -1,0 +1,19 @@
+program VTHack_1;
+
+
+
+uses
+  Vcl.Forms,
+  Main in 'Main.pas' {Form1},
+  PropertiesDemo in 'PropertiesDemo.pas' {PropertiesForm},
+  FileUtils in 'FileUtils.pas',
+  UTreeData in 'UTreeData.pas';
+
+{$R *.res}
+
+begin
+  Application.Initialize;
+  Application.MainFormOnTaskbar := True;
+  Application.CreateForm(TPropertiesForm, PropertiesForm);
+  Application.Run;
+end.

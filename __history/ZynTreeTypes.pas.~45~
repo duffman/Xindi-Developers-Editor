@@ -1,0 +1,136 @@
+unit ZynTreeTypes;
+
+interface
+
+uses
+	SysUtils;
+
+type
+	TZynNodeType = (ntUnset, ntRoot, ntFile, ntPath, ntDirUp);
+
+	PNodeInfoRec = ^TNodeInfoRec;
+    TNodeInfoRec = record
+        NodeType: TZynNodeType;
+        NodeData: Pointer;
+
+        // TMP ----
+        ParentIndex: Integer;
+		NodeIndex: Integer;
+        ChildCount: Integer;
+
+        Changed: Boolean;
+    end;
+
+    //
+    // Path Record
+    //
+	PNodePathRec = ^TNodePathRec;
+    TNodePathRec = record
+		Name: String;
+        Size: Integer;
+        Date: TDateTime;
+    end;
+
+
+	//
+    // File Record
+    //
+	PNodeFileRec = ^TNodeFileRec;
+    TNodeFileRec = record
+		Name: String;
+    end;
+
+    // --- //
+
+	TZynTreeNode = class(TObject)
+        FValidate: Boolean;
+        FNodeType: TZynNodeType;
+    	FPath: String;
+        FFullPath: String;
+        FFileName: String;
+        FFullFileName: String;
+
+        function SetType(AValue: TZynNodeType): TZynTreeNode;
+        function SetPath(AValue: String): TZynTreeNode;
+        function SetFilename(AValue: String): TZynTreeNode;
+
+        function Update(): Boolean;
+
+    private
+	  
+    public
+        constructor Create(ANodeType: TZynNodeType; APath: String; AFilename: String); overload;
+        constructor Create(ANodeType: TZynNodeType); overload;
+
+        destructor Destroy; override;
+
+        {****************************
+        * Properties
+        ****************************}
+        property Validate: Boolean read FValidate write FValidate; // When enabled files must exist in order to be set
+        property Path: String read FPath write FPath;
+        property FileName: String read FFileName write FFileName;
+        property FullFileName: String read FFullFileName;
+    end;
+
+implementation
+
+{ TFSInfoClass }
+
+constructor TZynTreeNode.Create(ANodeType: TZynNodeType);
+begin
+	FNodeType := ANodeType;
+end;
+
+constructor TZynTreeNode.Create(ANodeType: TZynNodeType; APath: String; AFilename: String);
+begin
+	FPath := APath;
+    FFileName := AFilename;
+    Update();
+end;
+
+destructor TZynTreeNode.Destroy;
+begin
+
+ 	// --- //
+    inherited;
+end;
+
+
+//
+// Set Type
+//
+function TZynTreeNode.SetType(AValue: TZynNodeType): TZynTreeNode;
+begin
+	if AValue <> FNodeType then
+    begin
+    	FNodeType := AValue;
+		Update();
+    end;
+end;
+
+//
+//  Set Path
+//
+function TZynTreeNode.SetPath(AValue: String): Boolean;
+begin
+	FPath := AValue;
+	Update();
+end;
+
+//
+//  Set Filename
+//
+function TZynTreeNode.SetFilename(AValue: String): Boolean;
+begin
+	FFileName := AValue;
+	Update();
+end;
+
+function TZynTreeNode.Update(): Boolean;
+begin
+	FPath := IncludeTrailingPathDelimiter(FPath);
+	FFullFileName := FPath + FFileName;
+end;
+
+end.
